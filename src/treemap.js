@@ -38,32 +38,72 @@ export default function () {
       .attr('height', (d) => d.y1 - d.y0)
       .attr('fill', (d, i) => color[i])
       .style('opacity', '0.3')
+      .style('cursor', 'pointer')
       .on('click', (d) => {
-        console.log('clicked on ...');
-        console.log(d);
         dispatch.call('click', this, d);
       });
 
-    cell.append('clipPath')
-      .attr('id', (d) => {
-        return `clip-${d.data.key}`;
-      })
-      .append('use')
-      .attr('xlink:href', (d) => `#${d.data.key}`);
+    // New labels
+    // function calculateFontSize(cont, dim, text) {
+    //   console.log(text);
+    //   const size = 20;
+    //   const t = cont.append('text')
+    //     .style('font-size', `${size}px`)
+    //     .attr('x', 0)
+    //     .attr('y', 20)
+    //     .style('opacity', 1)
+    //     .text('hello world');
+    //   const bbox = t.node().getBBox().width;
+    //   console.log(t.node());
+    //   console.log(bbox);
+    // }
+
+    cell.each((d) => {
+      /* eslint no-param-reassign: 0 */
+      d.width = d.x1 - d.x0;
+      d.height = d.y1 - d.y0;
+      d.horizontal = d.width >= d.height;
+      // d.fontsize = calculateFontSize(svg, d3.max([d.width, d.height]), d.data.key);
+    });
 
     cell.append('text')
-      .attr('clip-path', (d) => `url(#clip-${d.data.key})`)
-      .style('font-size', '0.8em')
-      .selectAll('tspan')
-      .data((d) => d.data.key.split(/(?=[A-Z][^A-Z])/g))
-      .enter()
-      .append('tspan')
-      .attr('x', 4)
-      .attr('y', (d, i) => 13 + (i * 10))
-      .text((d) => d);
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('text-anchor', 'middle')
+      .attr('alignment-baseline', 'middle')
+      .style('pointer-events', 'none')
+      .style('font-size', (d) => {
+        const ratio = d.horizontal ? d.width / d.data.key.length : d.height / d.data.key.length;
+        return `${ratio * 1.8}px`;
+      })
+      .attr('transform', (d) => {
+        if (d.horizontal) {
+          return `translate(${d.width / 2}, ${d.height / 2}),rotate(0)`;
+        }
+        return `translate(${d.width / 2}, ${d.height / 2}),rotate(270)`;
+      })
+      .text((d) => d.data.key);
+
+    // cell.append('clipPath')
+    //   .attr('id', (d) => {
+    //     return `clip-${d.data.key}`;
+    //   })
+    //   .append('use')
+    //   .attr('xlink:href', (d) => `#${d.data.key}`);
+    //
+    // cell.append('text')
+    //   .attr('clip-path', (d) => `url(#clip-${d.data.key})`)
+    //   .style('font-size', '0.8em')
+    //   .selectAll('tspan')
+    //   .data((d) => d.data.key.split(/(?=[A-Z][^A-Z])/g))
+    //   .enter()
+    //   .append('tspan')
+    //   .attr('x', 4)
+    //   .attr('y', (d, i) => 13 + (i * 10))
+    //   .text((d) => d);
 
     cell.append('title')
-      .text((d) => `${d.data.key}\n${d.data.doc_count}`);
+      .text((d) => `${d.data.key}`);
   };
 
   apijs(render).getset(config);
