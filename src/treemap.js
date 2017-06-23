@@ -73,8 +73,12 @@ export default function () {
       .attr('alignment-baseline', 'middle')
       .style('pointer-events', 'none')
       .style('font-size', (d) => {
-        const ratio = d.horizontal ? d.width / d.data.key.length : d.height / d.data.key.length;
-        return `${ratio * 1.8}px`;
+        let ratio = d.horizontal ? d.width / d.data.key.length : d.height / d.data.key.length;
+        ratio *= 2;
+        if (ratio > 50) {
+          ratio = 50;
+        }
+        return `${ratio}px`;
       })
       .attr('transform', (d) => {
         if (d.horizontal) {
