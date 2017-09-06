@@ -73,7 +73,8 @@ export default function () {
       .attr('alignment-baseline', 'middle')
       .style('pointer-events', 'none')
       .style('font-size', (d) => {
-        let ratio = d.horizontal ? d.width / d.data.key.length : d.height / d.data.key.length;
+        let key = d.data.label || d.data.key;
+        let ratio = d.horizontal ? d.width / key.length : d.height / key.length;
         ratio *= 2;
         if (ratio > 50) {
           ratio = 50;
@@ -86,7 +87,7 @@ export default function () {
         }
         return `translate(${d.width / 2}, ${d.height / 2}),rotate(270)`;
       })
-      .text((d) => d.data.key);
+      .text((d) => d.data.label || d.data.key);
 
     // cell.append('clipPath')
     //   .attr('id', (d) => {
@@ -107,7 +108,7 @@ export default function () {
     //   .text((d) => d);
 
     cell.append('title')
-      .text((d) => `${d.data.key}`);
+      .text((d) => `${d.data.label || d.data.key}`);
   };
 
   apijs(render).getset(config);
