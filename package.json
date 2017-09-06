@@ -1,6 +1,6 @@
 {
   "name": "otl-treemap",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Treemap visualisation component for Open Targets | Library",
   "main": "index.js",
   "directories": {
